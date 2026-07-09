@@ -1,6 +1,6 @@
 # Hardware SPI Controller for Beanboard
 
-Digital simulation files and schematic for a hardware SPI controller designed as a BeanBoard plug-in.
+Digital simulation files and kicad schematic for a hardware SPI controller designed as a BeanBoard plug-in.
 
 Full writeup: [painfuldiodes.wordpress.com/2026/01/19/hardware-spi-for-beanboard/](https://painfuldiodes.wordpress.com/2026/01/19/hardware-spi-for-beanboard/)
 
