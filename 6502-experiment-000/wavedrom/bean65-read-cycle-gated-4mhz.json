@@ -1,0 +1,19 @@
+{
+  "signal": [
+    {"name": "PHI2", "wave": "hl........h........l.."},
+    {},
+    {"name": "A0-A15", "wave": "=x=.................x.", "data": ["prev", ""]},
+    {},
+    {"name": "R/W", "wave": "xx1.................x."},
+    {},
+    {"name": "CE#/OE#", "wave": "1.........0........1.."},
+    {},
+    {"name": "D0-D7", "wave": "z.........x.......=..z", "data": ["memory data"]},
+    {"node": "..........p.......q..."},
+    {"name": "Bus cycle", "wave": "==.................=..", "data": ["prev", "read cycle", "next"]}
+  ],
+  "edge": [
+    "p<->q read access within ~100ns"
+  ],
+  "config": {"hscale": 1}
+}
