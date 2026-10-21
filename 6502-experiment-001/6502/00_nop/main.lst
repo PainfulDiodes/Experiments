@@ -1,0 +1,17 @@
+ca65 V2.18 - N/A
+Main file   : main.s
+Current file: main.s
+
+000000r 1               ; Bean65 NOP test - the whole 8k EEPROM is NOPs ($EA), including the reset vector,
+000000r 1               ; so the 6502 starts at $EAEA - which is NOPs too
+000000r 1               ; Build: cl65 -t none -o main.bin main.s
+000000r 1               
+000000r 1                       .setcpu "6502"
+000000r 1               
+000000r 1               ROM_SIZE   = $2000              ; 8k EEPROM
+000000r 1               FILL       = $EA                ; NOP
+000000r 1               
+000000r 1  EA EA EA EA          .res ROM_SIZE, FILL     ; the whole image is NOPs
+000004r 1  EA EA EA EA  
+000008r 1  EA EA EA EA  
+000000r 1               

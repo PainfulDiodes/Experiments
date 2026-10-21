@@ -1,0 +1,31 @@
+ca65 V2.18 - N/A
+Main file   : main.s
+Current file: main.s
+
+000000r 1               ; Bean65 reset vector test - all NOPs, with the reset vector set to a recognisable address
+000000r 1               ; Build: cl65 -t none -o main.bin main.s
+000000r 1               
+000000r 1                       .setcpu "6502"
+000000r 1               
+000000r 1               ; The 8k EEPROM ghosts across the top 32k, so the image is assembled as if at $8000-$9FFF.
+000000r 1               ; The CPU's reset vector at $FFFC is read from the same EEPROM byte as $9FFC.
+000000r 1               
+000000r 1               ROM_START  = $8000              ; start of the 8k image (EEPROM offset $0000)
+000000r 1               RESET_VEC  = $9FFC              ; reset vector - read by the CPU as $FFFC
+000000r 1               ROM_END    = $A000              ; end of the 8k image (first address after it)
+000000r 1               FILL       = $EA                ; padding byte - NOP
+000000r 1               
+000000r 1                       .org ROM_START
+008000  1               
+008000  1               ; Padding: .res count, fill - reserves count bytes of fill.
+008000  1               ; * is the current address, so RESET_VEC - * is the number of bytes from here
+008000  1               ; to the reset vector.
+008000  1               
+008000  1  EA EA EA EA          .res RESET_VEC - *, FILL
+008004  1  EA EA EA EA  
+008008  1  EA EA EA EA  
+009FFC  1               
+009FFC  1  34 12                .word $1234             ; reset vector
+009FFE  1               
+009FFE  1  EA EA                .res ROM_END - *, FILL  ; pad to the end of the image
+009FFE  1               

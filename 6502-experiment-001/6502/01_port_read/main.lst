@@ -1,0 +1,47 @@
+ca65 V2.18 - N/A
+Main file   : main.s
+Current file: main.s
+
+000000r 1               ; Bean65 port read test - read a memory mapped "port" with absolute addressing, NOP, loop
+000000r 1               ; Build: cl65 -t none -o main.bin main.s
+000000r 1               
+000000r 1                       .setcpu "6502"
+000000r 1               
+000000r 1               ; The 8k EEPROM ghosts across the top 32k, so the image is assembled as if at $8000-$9FFF.
+000000r 1               ; The CPU's reset vector at $FFFC is read from the same EEPROM byte as $9FFC.
+000000r 1               
+000000r 1               ROM_START  = $8000              ; start of the 8k image (EEPROM offset $0000)
+000000r 1               RESET_VEC  = $9FFC              ; reset vector - read by the CPU as $FFFC
+000000r 1               ROM_END    = $A000              ; end of the 8k image (first address after it)
+000000r 1               FILL       = $EA                ; padding byte - NOP
+000000r 1               
+000000r 1               ; With no address decoding the EEPROM ghosts across all 64k, so a byte in the image
+000000r 1               ; acts as the port: $4321 and $8321 are the same EEPROM byte (offset $0321)
+000000r 1               
+000000r 1               PORT       = $4321              ; the "port" address read by the program
+000000r 1               PORT_BYTE  = $8321              ; where the port byte sits in the image
+000000r 1               
+000000r 1                       .org ROM_START
+008000  1               
+008000  1  AD 21 43     reset:  LDA PORT                ; single read of the port
+008003  1  EA                   NOP
+008004  1  4C 00 80             JMP reset
+008007  1               
+008007  1               ; Padding: .res count, fill - reserves count bytes of fill.
+008007  1               ; * is the current address, so PORT_BYTE - * is the number of bytes from here
+008007  1               ; to the port byte, and RESET_VEC - * from there to the reset vector.
+008007  1               
+008007  1  EA EA EA EA          .res PORT_BYTE - *, FILL
+00800B  1  EA EA EA EA  
+00800F  1  EA EA EA EA  
+008321  1               
+008321  1  A5                   .byte $A5               ; the "port" value - a distinctive value
+008322  1               
+008322  1  EA EA EA EA          .res RESET_VEC - *, FILL
+008326  1  EA EA EA EA  
+00832A  1  EA EA EA EA  
+009FFC  1               
+009FFC  1  00 80                .word reset             ; reset vector
+009FFE  1               
+009FFE  1  EA EA                .res ROM_END - *, FILL  ; pad to the end of the image
+009FFE  1               

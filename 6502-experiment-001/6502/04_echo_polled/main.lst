@@ -1,0 +1,53 @@
+ca65 V2.18 - N/A
+Main file   : main.s
+Current file: main.s
+
+000000r 1               ; Bean65 polled echo test - wait for a character from BeanPort, then wait until
+000000r 1               ; BeanPort can accept a write, then echo the character back
+000000r 1               ; Uses only the A and X registers - no RAM needed
+000000r 1               ; Build: cl65 -t none -o main.bin main.s
+000000r 1               
+000000r 1                       .setcpu "6502"
+000000r 1               
+000000r 1               STATUS     = $7F00              ; BeanPort status register (A0 = 0)
+000000r 1               DATA       = $7F01              ; BeanPort data register (A0 = 1)
+000000r 1               RX_READY   = %00000001          ; status bit 0: a character is waiting to be read
+000000r 1               TX_READY   = %00000010          ; status bit 1: BeanPort can accept a write
+000000r 1               
+000000r 1               ; The 8k EEPROM ghosts across the top 32k, so the image is assembled as if at $8000-$9FFF.
+000000r 1               ; The CPU's reset vector at $FFFC is read from the same EEPROM byte as $9FFC.
+000000r 1               
+000000r 1               ROM_START  = $8000              ; start of the 8k image (EEPROM offset $0000)
+000000r 1               RESET_VEC  = $9FFC              ; reset vector - read by the CPU as $FFFC
+000000r 1               ROM_END    = $A000              ; end of the 8k image (first address after it)
+000000r 1               FILL       = $EA                ; padding byte - NOP
+000000r 1               
+000000r 1                       .org ROM_START
+008000  1               
+008000  1               reset:
+008000  1               rx_wait:
+008000  1  AD 00 7F             LDA STATUS              ; wait until a character is waiting
+008003  1  29 01                AND #RX_READY
+008005  1  F0 F9                BEQ rx_wait
+008007  1  AE 01 7F             LDX DATA                ; read it into X
+00800A  1               
+00800A  1               tx_wait:
+00800A  1  AD 00 7F             LDA STATUS              ; wait until BeanPort can accept a write
+00800D  1  29 02                AND #TX_READY
+00800F  1  F0 F9                BEQ tx_wait
+008011  1  8E 01 7F             STX DATA                ; echo it
+008014  1               
+008014  1  4C 00 80             JMP rx_wait
+008017  1               
+008017  1               ; Padding: .res count, fill - reserves count bytes of fill.
+008017  1               ; * is the current address, so RESET_VEC - * is the number of bytes from here
+008017  1               ; to the reset vector.
+008017  1               
+008017  1  EA EA EA EA          .res RESET_VEC - *, FILL
+00801B  1  EA EA EA EA  
+00801F  1  EA EA EA EA  
+009FFC  1               
+009FFC  1  00 80                .word reset             ; reset vector
+009FFE  1               
+009FFE  1  EA EA                .res ROM_END - *, FILL  ; pad to the end of the image
+009FFE  1               
