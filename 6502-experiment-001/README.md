@@ -1,6 +1,6 @@
 # 6502 experiment 1
 
-[PainfulDiodes blog post](https://painfuldiodes.wordpress.com)
+[PainfulDiodes blog post](https://painfuldiodes.wordpress.com/2026/10/21/bean65-part-2/)
 
 Following on from [experiment zero](../6502-experiment-000/), where an Arduino Mega fed the W65C02S an endless stream of NOPs, this experiment replaces the Arduino's fake memory with a real AT28C64B EEPROM, adds address decoding with a single 74HCT00, and connects a breadboard BeanPort USB interface. The 6502 runs programs from the EEPROM, ending with one that echoes characters typed into a terminal on the Mac.
 
